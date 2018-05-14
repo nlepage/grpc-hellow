@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package com.github.nlepage.grpc_hellow.service;
+option go_package = "service";
+
+service Hellow {
+  rpc sayHellow(SayHellowRequest) returns (SayHellowResponse) {}
+}
+
+message SayHellowRequest {
+  string name = 1;
+  int64 count = 2;
+}
+
+message SayHellowResponse {
+  string message = 1;
+}
