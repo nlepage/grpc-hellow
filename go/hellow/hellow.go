@@ -99,7 +99,7 @@ func (s *server) SayHellow(ctx context.Context, req *service.SayHellowRequest) (
 		count[i] = strconv.Itoa(i + 1)
 	}
 	return &service.SayHellowResponse{
-		Message: fmt.Sprintf("Hellow %s ! %s", req.Name, strings.Join(count, " ")),
+		Message: fmt.Sprintf("Hellow %s, this is go ! %s", req.Name, strings.Join(count, " ")),
 	}, nil
 }
 

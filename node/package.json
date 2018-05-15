@@ -1,0 +1,13 @@
+{
+  "name": "hellow",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "commander": "^2.15.1",
+    "grpc": "^1.11.3",
+    "lodash": "^4.17.10"
+  }
+}
