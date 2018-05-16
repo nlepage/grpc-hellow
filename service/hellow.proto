@@ -5,6 +5,7 @@ option go_package = "service";
 
 service Hellow {
   rpc sayHellow(SayHellowRequest) returns (SayHellowResponse) {}
+  rpc streamHellow(SayHellowRequest) returns (stream SayHellowResponse) {}
 }
 
 message SayHellowRequest {

@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"net"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/nlepage/grpc-hellow/go/hellow/service"
 	"github.com/spf13/cobra"
@@ -29,12 +31,14 @@ var (
 		RunE:  serve,
 		Args:  cobra.NoArgs,
 	}
-	host string
-	port = 9090
+	host     string
+	port     = 9090
+	isStream bool
 )
 
 func init() {
 	clientCmd.Flags().StringVar(&host, "host", "localhost", "Host to call")
+	clientCmd.Flags().BoolVarP(&isStream, "stream", "s", false, "Ask for a streamed response")
 	hellowCmd.AddCommand(clientCmd)
 	hellowCmd.AddCommand(serverCmd)
 }
@@ -59,15 +63,34 @@ func sayHellow(cmd *cobra.Command, args []string) error {
 
 	client := service.NewHellowClient(conn)
 
-	res, err := client.SayHellow(context.Background(), &service.SayHellowRequest{
-		Name:  name,
-		Count: int64(count),
-	})
-	if err != nil {
-		return err
+	if isStream {
+		stream, err := client.StreamHellow(context.Background(), &service.SayHellowRequest{
+			Name:  name,
+			Count: int64(count),
+		})
+		if err != nil {
+			return err
+		}
+		for {
+			res, err := stream.Recv()
+			if err == io.EOF {
+				return nil
+			}
+			if err != nil {
+				return err
+			}
+			fmt.Println(res.Message)
+		}
+	} else {
+		res, err := client.SayHellow(context.Background(), &service.SayHellowRequest{
+			Name:  name,
+			Count: int64(count),
+		})
+		if err != nil {
+			return err
+		}
+		fmt.Println(res.Message)
 	}
-
-	fmt.Println(res.Message)
 
 	return nil
 }
@@ -102,6 +125,19 @@ func (s *server) SayHellow(ctx context.Context, req *service.SayHellowRequest) (
 	return &service.SayHellowResponse{
 		Message: strings.Join(split, "\n"),
 	}, nil
+}
+
+func (s *server) StreamHellow(req *service.SayHellowRequest, stream service.Hellow_StreamHellowServer) error {
+	message := fmt.Sprintf("Hellow %s, this is go !", req.Name)
+	for i := int64(0); i < req.Count; i++ {
+		time.Sleep(time.Second)
+		if err := stream.Send(&service.SayHellowResponse{
+			Message: message,
+		}); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 var _ service.HellowServer = (*server)(nil)
