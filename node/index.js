@@ -23,10 +23,10 @@ const serve = () => {
   const server = new grpc.Server()
   server.addService(Hellow.service, {
     sayHellow: ({ request: { name, count } }, callback) => callback(null, {
-      message: `Hellow ${name}, this is node ! ${range(1, Number(count) + 1).join(' ')}`
+      message: Array(Number(count)).fill(`Hellow ${name}, this is node !`).join('\n')
     }),
   })
-  server.bind(`0.0.0.0:${port}`, grpc.ServerCredentials.createInsecure());
+  server.bind(`0.0.0.0:${port}`, grpc.ServerCredentials.createInsecure())
   server.start()
 }
 

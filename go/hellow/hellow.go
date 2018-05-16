@@ -94,12 +94,13 @@ func (s *server) serve() error {
 }
 
 func (s *server) SayHellow(ctx context.Context, req *service.SayHellowRequest) (*service.SayHellowResponse, error) {
-	count := make([]string, req.Count)
-	for i := range count {
-		count[i] = strconv.Itoa(i + 1)
+	message := fmt.Sprintf("Hellow %s, this is go !", req.Name)
+	split := make([]string, req.Count)
+	for i := range split {
+		split[i] = message
 	}
 	return &service.SayHellowResponse{
-		Message: fmt.Sprintf("Hellow %s, this is go ! %s", req.Name, strings.Join(count, " ")),
+		Message: strings.Join(split, "\n"),
 	}, nil
 }
 
