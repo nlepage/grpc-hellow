@@ -1,11 +1,20 @@
 # grpc-hellow
 
-Start servers with `docker-compose up -d`.
+Start servers with `docker-compose up -d`
 
-Make a go -> go call with `docker-compose exec go /hellow client world 42`
+Call the go client with `docker-compose exec go /hellow client [options] <name> <count>`
 
-Make a go -> node call with `docker-compose exec go /hellow --host node client world 42`
+Call the node client with with `docker-compose exec node yarn start client [options] <name> <count>`
 
-Make a node -> node call with `docker-compose exec node yarn start client world 42`.
+Client supports the following options:
+```
+    --host string   Host to call (default "localhost")
+-s, --stream        Ask for a streamed response
+```
 
-Make a node -> go call with `docker-compose exec node yarn start client --host go world 42`.
+Examples:
+```sh
+$ docker-compose exec node yarn start client world 42              # Make a simple node to node call
+$ docker-compose exec go /hellow client -s world 42                # Make a streamed go to go call
+$ docker-compose exec node yarn start client --host go -s world 42 # Make a streamed node to go call
+```
