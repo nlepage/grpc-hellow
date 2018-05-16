@@ -1,4 +1,6 @@
-# grpc-hellow
+gRPC Hello World in different languages with server side streaming
+
+## Usage
 
 Start servers with `docker-compose up -d`
 
